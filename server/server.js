@@ -24,9 +24,10 @@ io.on('connection', (socket) => {
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
   //listen to incoming event 'createMessage'
-  socket.on('createMessage', (newMsg) => {
+  socket.on('createMessage', (newMsg, callback) => {
     //emit an event and pass data to all connected users
     io.emit('newMessage', generateMessage(newMsg.from, newMsg.text));
+    callback('This is from the server');
 
     // {
     //   //emit an event and pass data to all connected users except the emitter
