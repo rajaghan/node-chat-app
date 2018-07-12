@@ -5,6 +5,9 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 
+const {
+  generateMessage
+} = require('./utils/message');
 const publicPath = path.join(__dirname, '..', '/public');
 const port = process.env.PORT;
 const app = express();
@@ -16,28 +19,22 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app',
-    createdAt: new Date().getTime()
-  });
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdAt: new Date().getTime()
-  });
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
 
   //listen to incoming event 'createMessage'
   socket.on('createMessage', (newMsg) => {
     //emit an event and pass data to all connected users
-    io.emit('newMessage', {
-      //emit an event and pass data to all connected users except the emitter
-      // socket.broadcast.emit('newMessage', {
-      from: newMsg.from,
-      text: newMsg.text,
-      createdAt: new Date().getTime()
-    });
+    io.emit('newMessage', generateMessage(newMsg.from, newMsg.text));
+
+    // {
+    //   //emit an event and pass data to all connected users except the emitter
+    //   // socket.broadcast.emit('newMessage', {
+    //   from: newMsg.from,
+    //   text: newMsg.text,
+    //   createdAt: new Date().getTime()
+    // });
   });
 
   socket.on('disconnect', () => {
