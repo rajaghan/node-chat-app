@@ -4,5 +4,8 @@
   },
   "test": {
     "PORT": 3000
+  },
+  "production":{
+	"PORT": 8080
   }
 }
